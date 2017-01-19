@@ -10,6 +10,8 @@ import config
 users_config = config.users_config
 email_config = config.email_config
 
+initial = True
+
 
 def sendmail(to, title, content):
     msg = MIMEText(content)
@@ -40,6 +42,7 @@ def notify(user, date, n, config):
 
 
 def main():
+    global initial
     url = 'http://192.168.34.73/intern/verwaltung/packchen-pakete'
     regex_date = r'<strong>(.+?)</strong>'
 
@@ -50,8 +53,11 @@ def main():
         users_dates[user] = []
 
     while True:
-
-        req = requests.get(url)
+        try:
+            req = requests.get(url)
+        except:
+            continue
+        
         htmldata = req.text
 
         for user in users:
