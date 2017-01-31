@@ -3,17 +3,19 @@ import re
 import time
 import sys
 import smtplib
+import datetime
 from email.mime.text import MIMEText
 
 # Load config
 import config
 users_config = config.users_config
 email_config = config.email_config
+timeout = config.timeout
 
 initial = True
 
 
-def sendmail(to, title, content):
+def send_mail(to, title, content):
     msg = MIMEText(content)
 
     msg['Subject'] = title
@@ -27,7 +29,7 @@ def sendmail(to, title, content):
     s.quit()
 
 
-def notify(user, date, n, config):
+def notify(user, date, n, mail_to):
 
     if n is '':
         n = '1'
@@ -38,7 +40,7 @@ def notify(user, date, n, config):
     print('Notifying user {} about {} new package{} on day {}'.format(user, n, s, date))
     title = 'Schollheim: {} new package{} on {} for {}'.format(n, s, date, user)
     content = 'You have received {} new package{} on {}. Pick them up from the Verwaltung.'.format(n, s, date)
-    sendmail(config, title, content)
+    send_mail(mail_to, title, content)
 
 
 def main():
@@ -55,7 +57,10 @@ def main():
     while True:
         try:
             req = requests.get(url)
+            print('Successful pull at {}          '.format(datetime.datetime.now().time()), end='\r', flush=True)
         except:
+            print('Request failed at {}           '.format(datetime.datetime.now().time()), end='\r', flush=True)
+            time.sleep(timeout)
             continue
         
         htmldata = req.text
@@ -80,7 +85,7 @@ def main():
             users_dates[user] = dates
 
         initial = False
-        time.sleep(60)
+        time.sleep(timeout)
 
 if __name__ == '__main__':
 

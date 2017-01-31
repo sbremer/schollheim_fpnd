@@ -13,3 +13,6 @@ email_config['port'] = 587
 email_config['auth_user'] = 'login_username'
 email_config['auth_passwd'] = 'very_secret_password_goes_here'
 email_config['from'] = 'Friendly Parcel Notifier Daemon <response_email_address@your-mailserver.com>'
+
+# General stuff
+timeout = 60
